@@ -1,0 +1,131 @@
+---
+title: "Classification Intro"
+author: "Bastola"
+date: "`r format(Sys.Date(), ' %B %d %Y')`"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      collapse = TRUE, 
+                      comment=NA, 
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.height = 4, fig.width = 6, fig.align='center')
+
+library(tidyverse) 
+library(caret)
+library(class)
+library(patchwork)
+library(tidymodels)
+library(mlbench)     # for PimaIndiansDiabetes2 dataset
+library(janitor)
+library(parsnip)
+library(kknn)
+library(paletteer)
+library(corrr)
+library(scico)
+library(forcats)
+```
+
+## Your Turn 1
+
+```{r}
+# Load the data
+data(PimaIndiansDiabetes2)
+db <- PimaIndiansDiabetes2
+```
+
+a. Tidy the data to make it ready for analysis:
+
+
+```{r}
+
+```
+
+b. Make a correlation plot of the numerical variables in the dataset
+
+```{r}
+db %>%
+  select(_____) %>%  # only numerical variables
+  correlate() %>%
+  stretch() %>%
+  ggplot(aes(x, y, fill = r)) +
+  geom_tile() +
+  geom_text(aes(label = as.character(fashion(r)))) +
+  scale_fill_paletteer_c("scico::roma", limits = c(-1, 1), direction = -1)
+
+```
+
+c. Which pair of variables in the dataset have the largest correlation?
+
+*Answer:*
+
+
+d. Using `parsnip` package perform all the steps involved in classifying whether a patient with certain glucose and insulin would have diabetes or not.
+
+
+```{r}
+#1 Prepare raw data
+db_raw <- 
+
+```
+
+
+```{r}
+# 2 Create a recipe for data pre-processing
+db_recipe <- recipe(________, data = _____) %>%
+  step_scale(all_predictors()) %>%
+  step_center(all_predictors()) %>%
+  prep()
+
+```
+
+
+```{r}
+# 3 Apply the recipe to the data set
+db_scaled <-  bake(______, ______)
+```
+
+
+```{r}
+# 4 Create a model specification
+knn_spec <- nearest_neighbor(mode = "classification",
+                             engine = "kknn",
+                             weight_func = "rectangular",
+                             neighbors = 5)
+
+```
+
+
+```{r}
+# 5 Fit the model on the preprocessed data
+knn_fit <- knn_spec %>%
+ fit( ~ ., data = )
+```
+
+
+```{r}
+# 6 Classify
+# These are standardized value!!
+new_observations <- tibble(glucose = c(1, 2), insulin = c(-1, 1))
+predict(, new_data = )
+
+```
+
+We already know the labels of some of the patients in the dataset. How well does the model predict their diabetes status? We will see more of this in the coming lectures, but for now try to compare the results for the first 10 cases in the dataset.
+
+```{r}
+some_observations <- db_scaled[1:10,1:2]
+predictions <- predict(knn_fit, new_data = )
+cbind(db_scaled[1:10,3], predictions)
+```
+
+What is the accuracy percentage?
+
+*Answer:*
+
+
